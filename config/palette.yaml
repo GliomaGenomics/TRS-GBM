@@ -1,0 +1,65 @@
+# Colours shared by every panel. A group is drawn in the same colour wherever it
+# appears in the paper, so scripts take group colours from here rather than
+# defining their own.
+
+# Up and Down responders, and the genes and gene sets that rise or fall with TRS.
+responder:
+  Up: "#FFBA49"
+  Down: "#63CCCA"
+
+# Single-cell patients by the sign of their TRS (recurrent minus primary
+# whole-tumour pseudobulk score), in the colours of the responders they parallel.
+trs_sign:
+  "+TRS": "#FFBA49"
+  "−TRS": "#63CCCA"
+
+# Bulk cohorts.
+cohort:
+  Discovery: "#50C878"
+  EORTC: "#FE7F9C"
+
+# Multi-region samples, by whether they lie in the contrast-enhancing lesion.
+contrast_enhancement:
+  Border: "#3ba3ec"
+  "No": "#f77189"
+  "Yes": "#50b131"
+
+# IvyGAP histological regions of Visium spots, from the tumour periphery to its
+# core (Okabe-Ito colours).
+histology_region:
+  Leading edge: "#E69F00"
+  Infiltrating tumour: "#D55E00"
+  Cellular tumour: "#009E73"
+  Perinecrotic zone: "#56B4E9"
+  Necrosis: "#000000"
+
+# de Jong (2025) tumours, matched between the Visium maps and the section means.
+# husl hues assigned with a stride of five, so neighbouring tumours differ.
+deJong_tumour:
+  AT3: "#f77189"
+  AT4: "#34af84"
+  AT5: "#e866f4"
+  AT6: "#97a431"
+  AT7: "#3ba3ec"
+  AT9: "#e68332"
+  AT10: "#36ada4"
+  AT11: "#f668c2"
+  AT12: "#50b131"
+  AT13: "#a48cf4"
+  AT14: "#bb9832"
+  AT15: "#38aabf"
+
+# Discovery's centres other than Stead, the blind test set of the TRS prediction
+# models (seven husl hues over the centres of the paired cohorts, alphabetically:
+# DFKZ, EORTC, Kim, Nam, Rabadan, Stead, Verhaak).
+centre:
+  DFKZ: "#f77189"
+  Kim: "#82a931"
+  Nam: "#34af8a"
+  Rabadan: "#37aabb"
+  Verhaak: "#f45deb"
+
+# Variant classes on protein plots (maftools' colours).
+variant_class:
+  Missense_Mutation: "#33A02C"
+  Nonsense_Mutation: "#E31A1C"

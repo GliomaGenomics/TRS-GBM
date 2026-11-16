@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Code Ocean Reproducible Run: places the demonstration counts (data/demo, synthetic,
+# three primary/recurrent pairs) on the JBS axis and gives each pair's TRS. Writes
+# to /results on Code Ocean and to results/ elsewhere.
+#
+# Example, outside Code Ocean:
+#     pixi run bash code/run
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+results=results
+if [[ -d /results ]]; then
+    results=/results
+fi
+mkdir -p "$results"
+
+python code/jbs_axis_score.py \
+    --mtx data/demo/counts.tsv \
+    --genes data/gene_metadata/gene_metadata_loadings.csv \
+    -o "$results/demo_axis_scores.tsv"
+
+# Sample names are <patient>_P (primary) and <patient>_R (recurrent).
+python - "$results" <<'EOF'
+import sys
+
+import pandas as pd
+
+results = sys.argv[1]
+scores = pd.read_csv(f"{results}/demo_axis_scores.tsv", sep="\t", index_col=0)["axis_score"]
+tumours = scores.index.to_series().str.rsplit("_", n=1, expand=True)
+pairs = pd.DataFrame({"patient": tumours[0], "stage": tumours[1], "score": scores})
+pairs = pairs.pivot(index="patient", columns="stage", values="score")
+pairs = pairs.rename(columns={"P": "primary_axis_score", "R": "recurrent_axis_score"})
+pairs["TRS"] = pairs["recurrent_axis_score"] - pairs["primary_axis_score"]
+pairs.to_csv(f"{results}/demo_trs.tsv", sep="\t")
+print(pairs.round(2).to_string())
+EOF

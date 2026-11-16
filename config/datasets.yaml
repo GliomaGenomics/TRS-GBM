@@ -1,0 +1,482 @@
+# Datasets, one entry per cohort. Each entry stands on its own: it names the file
+# its samples live in, the filters that pick them out of it, the columns the
+# scripts need, and the files derived from it. Cohorts that happen to share a
+# file today say so independently, so moving one to its own file is a change to
+# that entry alone.
+#
+# Scripts take a cohort name and read everything they need from its entry; they
+# do not hard-code paths. Point these at your own copy of the data by editing
+# this file.
+#
+# Paths are relative to the repository root. Copy or link your data into data/
+# rather than pointing an entry at a mounted drive.
+
+datasets:
+
+  bulk:
+
+    # 130 paired patients. 260 samples.
+    EORTC:
+      path: data/bulk/bulk_counts.h5ad
+      filters:
+        Cohort: [EORTC]
+      patient_column: Patient
+      stage_column: Stage
+      primary_value: P
+      recurrent_value: R
+      purity_column: GBMPurity
+      pair_purity_column: Min. purity in pair
+      min_purity: 0.4
+      # Marks the single row per patient that carries that patient's clinical
+      # record; it sits on the primary sample.
+      include_column: Include
+      # Gene identifiers in .var, matched against the gene annotation.
+      gene_id_column: Ensembl
+      # Gene biotype in .var.
+      gene_type_column: GeneType
+      # Centre of origin. A cohort pooled from several centres is modelled with
+      # centre as a covariate.
+      centre_column: Sample.Source
+      # Patient TRS, carried on both samples of the pair (trs_column.py).
+      trs_column: TRS
+      # How this cohort is labelled on figure axes and in legends.
+      label: EORTC
+      # Continuous clinical variables, column -> axis label.
+      continuous_clinical:
+        Age: Age (years)
+        Surgical.Intervals..months.: Surgical interval (months)
+        survival: Survival (months)
+        MGMT_ExpP: MGMT promoter expression
+        GBMPurity: GBMPurity
+      # Categorical clinical variables, column -> panel title.
+      discrete_clinical:
+        Gender: Gender
+        Location.Primary: Tumour location
+        MGMT: MGMT promoter
+        Subtype: Subtype
+      # Pipeline FPKM, samples x genes. The fold changes, and so the axis, were
+      # computed from these values, so a sample's axis score is taken from here
+      # rather than recomputed from the count matrix.
+      fpkm: "data/bulk/Discovery&EORTC_FPKM.csv"
+      # PC1 loadings that place a sample on the JBS axis.
+      axis_loadings: data/loadings/jbs_axis_discovery.csv
+      # Added to FPKM before the log2 for axis scoring.
+      pseudocount: 0.01
+      # Per-patient log2 fold changes, primary to recurrent, one column per patient.
+      log2fc: data/bulk/log2fc_eortc.csv
+      # The fold changes were built for these groups of patients, each with its
+      # own gene filter; a gene the filter removed has a fold change of zero for
+      # every patient in its group. Each group is the union of its filters.
+      fold_change_groups:
+        - [{Sample.Source: [EORTC]}]
+      # JBS axis loadings derived by jbs_axis_loadings.py, keyed by gene set.
+      loadings:
+        jbs_all: data/loadings/eortc_bulk_jbs_all.csv
+        tanner2024_le50: data/loadings/eortc_bulk_le50.csv
+        tanner2024_le70: data/loadings/eortc_bulk_le70.csv
+      # Primary, and recurrent, tumour genes tested against TRS
+      # (responder_de_overlap.R).
+      primary_trs_de: data/de/primary_trs_eortc.csv
+      recurrent_trs_de: data/de/recurrent_trs_eortc.csv
+      # Gene sets tested against those genes' ranking (responder_gsea_overlap.R).
+      primary_trs_gsea: data/gsea/primary_trs_eortc.csv
+      recurrent_trs_gsea: data/gsea/recurrent_trs_eortc.csv
+      # Each sample's JBS axis score, written by axis_score_column.py.
+      axis_score_column: JBS axis score
+      # Genes tested against the JBS axis score, and gene sets tested against
+      # those genes' ranking, by stage (axis_score_gsea.R).
+      axis_score_de:
+        primary: data/de/axis_score_eortc_primary.csv
+        recurrent: data/de/axis_score_eortc_recurrent.csv
+      axis_score_gsea:
+        primary: data/gsea/axis_score_eortc_primary.csv
+        recurrent: data/gsea/axis_score_eortc_recurrent.csv
+      # Single-nucleotide variants called from each primary tumour's RNA
+      # (Mutect2, tumour-only; VEP annotation), the cohort in one MAF
+      # (responder_variants.R).
+      variants: data/variants/EORTC_raw_merged.maf.gz
+      # A MAF Tumor_Sample_Barcode is the patient followed by this suffix.
+      variant_barcode_suffix: "1"
+      # Up (U) or Down (D) responder, carried on the primary sample.
+      responder_column: ResponderType
+      # Written by responder_variants.R: the filtered non-synonymous calls of the
+      # included primaries, their mutational burden, and each gene's Up vs Down test.
+      filtered_variants: data/variants/eortc_variants_filtered.csv
+      mutational_burden: data/variants/eortc_mutational_burden.csv
+      responder_variant_association: data/variants/eortc_responder_variant_association.csv
+
+    # 129 paired patients pooled from seven centres. 258 samples.
+    Discovery:
+      path: data/bulk/bulk_counts.h5ad
+      filters:
+        Cohort: [Discovery]
+      patient_column: Patient
+      stage_column: Stage
+      primary_value: P
+      recurrent_value: R
+      purity_column: GBMPurity
+      pair_purity_column: Min. purity in pair
+      min_purity: 0.4
+      # Marks the single row per patient that carries that patient's clinical
+      # record; it sits on the primary sample.
+      include_column: Include
+      # Gene identifiers in .var, matched against the gene annotation.
+      gene_id_column: Ensembl
+      # Gene biotype in .var.
+      gene_type_column: GeneType
+      # Centre of origin. A cohort pooled from several centres is modelled with
+      # centre as a covariate.
+      centre_column: Sample.Source
+      # Patient TRS, carried on both samples of the pair (trs_column.py).
+      trs_column: TRS
+      # Up (U) or Down (D) responder, carried on the primary sample.
+      responder_column: ResponderType
+      # How this cohort is labelled on figure axes and in legends.
+      label: Discovery
+      # Pipeline FPKM, samples x genes. The fold changes, and so the axis, were
+      # computed from these values, so a sample's axis score is taken from here
+      # rather than recomputed from the count matrix.
+      fpkm: "data/bulk/Discovery&EORTC_FPKM.csv"
+      # PC1 loadings that place a sample on the JBS axis.
+      axis_loadings: data/loadings/jbs_axis_discovery.csv
+      # Added to FPKM before the log2 for axis scoring.
+      pseudocount: 0.01
+      log2fc: data/bulk/log2fc_discovery.csv
+      # The fold changes were built for these groups of patients, each with its
+      # own gene filter; a gene the filter removed has a fold change of zero for
+      # every patient in its group. Each group is the union of its filters.
+      fold_change_groups:
+        - [{Sample.Source: [Stead, DFKZ, Rabadan], LibraryType: [Stranded_Total]}]
+        - [{Sample.Source: [Kim, Nam, Verhaak]},
+           {Sample.Source: [Rabadan], LibraryType: [Unstranded_mRNA]}]
+      loadings:
+        jbs_all: data/loadings/discovery_bulk_jbs_all.csv
+        tanner2024_le50: data/loadings/discovery_bulk_le50.csv
+        tanner2024_le70: data/loadings/discovery_bulk_le70.csv
+      # Each sample's JBS axis score, written by axis_score_column.py.
+      axis_score_column: JBS axis score
+      # Genes tested against the JBS axis score, and gene sets tested against
+      # those genes' ranking, by stage (axis_score_gsea.R).
+      axis_score_de:
+        primary: data/de/axis_score_discovery_primary.csv
+        recurrent: data/de/axis_score_discovery_recurrent.csv
+      axis_score_gsea:
+        primary: data/gsea/axis_score_discovery_primary.csv
+        recurrent: data/gsea/axis_score_discovery_recurrent.csv
+
+    # Discovery split by centre of origin, for the analyses that hold one centre
+    # out. The two together are exactly Discovery.
+
+    # 53 paired patients. 106 samples.
+    Discovery_Stead:
+      path: data/bulk/bulk_counts.h5ad
+      filters:
+        Cohort: [Discovery]
+        Sample.Source: [Stead]
+      patient_column: Patient
+      stage_column: Stage
+      primary_value: P
+      recurrent_value: R
+      purity_column: GBMPurity
+      pair_purity_column: Min. purity in pair
+      min_purity: 0.4
+      # Marks the single row per patient that carries that patient's clinical
+      # record; it sits on the primary sample.
+      include_column: Include
+      # Gene identifiers in .var, matched against the gene annotation.
+      gene_id_column: Ensembl
+      # Gene biotype in .var.
+      gene_type_column: GeneType
+      # Centre of origin. A cohort pooled from several centres is modelled with
+      # centre as a covariate.
+      centre_column: Sample.Source
+      # Patient TRS, carried on both samples of the pair (trs_column.py).
+      trs_column: TRS
+      # How this cohort is labelled on figure axes and in legends.
+      label: Discovery
+      # Continuous clinical variables, column -> axis label.
+      continuous_clinical:
+        Age: Age (years)
+        Surgical.Intervals..months.: Surgical interval (months)
+        survival: Survival (months)
+        MGMT_ExpP: MGMT promoter expression
+        GBMPurity: GBMPurity
+      # Categorical clinical variables, column -> panel title.
+      discrete_clinical:
+        Gender: Gender
+        Location.Primary: Tumour location
+        MGMT: MGMT promoter
+        Subtype: Subtype
+      # Primary, and recurrent, tumour genes tested against TRS
+      # (responder_de_overlap.R).
+      primary_trs_de: data/de/primary_trs_discovery_stead.csv
+      recurrent_trs_de: data/de/recurrent_trs_discovery_stead.csv
+      # Gene sets tested against those genes' ranking (responder_gsea_overlap.R).
+      primary_trs_gsea: data/gsea/primary_trs_discovery_stead.csv
+      recurrent_trs_gsea: data/gsea/recurrent_trs_discovery_stead.csv
+      # Single-nucleotide variants called from each primary tumour's RNA
+      # (Mutect2, tumour-only; VEP annotation), the cohort in one MAF
+      # (responder_variants.R).
+      variants: data/variants/Stead_raw_merged.maf.gz
+      # A MAF Tumor_Sample_Barcode is the patient followed by this suffix.
+      variant_barcode_suffix: "_PAligned"
+      # Up (U) or Down (D) responder, carried on the primary sample.
+      responder_column: ResponderType
+      # Written by responder_variants.R: the filtered non-synonymous calls of the
+      # included primaries, their mutational burden, and each gene's Up vs Down test.
+      filtered_variants: data/variants/discovery_stead_variants_filtered.csv
+      mutational_burden: data/variants/discovery_stead_mutational_burden.csv
+      responder_variant_association: data/variants/discovery_stead_responder_variant_association.csv
+
+    # Every longitudinal centre pooled into Discovery other than Stead: DFKZ 16,
+    # Diaz 4, Kim 13, Nam 30, Rabadan 8, Verhaak 5. 76 paired patients, 152
+    # samples. Listed by name so a centre added to the data later joins only
+    # deliberately; the two entries together are exactly Discovery.
+    Discovery_Heldout:
+      path: data/bulk/bulk_counts.h5ad
+      filters:
+        Cohort: [Discovery]
+        Sample.Source: [DFKZ, Diaz, Kim, Nam, Rabadan, Verhaak]
+      patient_column: Patient
+      stage_column: Stage
+      primary_value: P
+      recurrent_value: R
+      purity_column: GBMPurity
+      pair_purity_column: Min. purity in pair
+      min_purity: 0.4
+      # Marks the single row per patient that carries that patient's clinical
+      # record; it sits on the primary sample.
+      include_column: Include
+      # Gene identifiers in .var, matched against the gene annotation.
+      gene_id_column: Ensembl
+      # Centre of origin.
+      centre_column: Sample.Source
+      # Patient TRS, carried on both samples of the pair (trs_column.py).
+      trs_column: TRS
+      # How this cohort is labelled on figure axes and in legends.
+      label: Discovery
+
+    # Multi-region bulk RNA-seq: 94 samples from ten glioblastomas, each sample
+    # mapped in three dimensions within its tumour. Mathur et al. publish it as
+    # supplementary tables, expression by gene symbol.
+    mathur_2025:
+      # Expression as log2(TPM + 1), genes x samples.
+      expression: data/spatial/mathur_2025/raw_mathur_2025_transcriptomics.xlsx
+      expression_sheet: A. Gene expression
+      # One row per sample; the column headers sit on the sheet's second row.
+      metadata: data/spatial/mathur_2025/raw_mathur_2025_metadata.xlsx
+      sample_sheet: B. Sample information
+      sample_column: ID
+      patient_column: Patient
+      # Whether the sample lies in the contrast-enhancing lesion: Yes, No or Border.
+      contrast_enhancement_column: CEL
+      # Distance from the tumour centroid relative to the periphery: 0 at the
+      # centroid, 1 at the periphery.
+      centre_distance_column: Dist
+      # PC1 loadings that place a sample on the JBS axis, matched to the table's
+      # genes through gene_symbols.
+      axis_loadings: data/loadings/jbs_axis_discovery.csv
+      # Added to TPM before the log2 for axis scoring.
+      pseudocount: 0.01
+
+  spatial:
+
+    # 10x Visium sections from the GBM-space atlas: 97 sections from 12
+    # tumours, several sampling sites per tumour. One h5ad per section, named
+    # <tumour>-...-FO-<site>_<replicate> or <tumour>-...-FO-<site>-S<section>;
+    # raw counts by gene symbol sit in .X beside non-expression features.
+    deJong_2025:
+      directory: data/spatial/deJong_2025
+      # The tumours profiled with standard Visium. AT15 was profiled with
+      # CytAssist (de Jong Table S14 and Methods), whose probes capture each
+      # gene with a different efficiency, so its scores are not comparable.
+      tumours: [AT3, AT4, AT5, AT6, AT7, AT9, AT10, AT11, AT12, AT13, AT14]
+      feature_type_column: feature_types
+      expression_features: Gene Expression
+      # PC1 loadings that place a spot on the JBS axis, matched to the counts
+      # through gene_symbols; each gene's length is that of its own Ensembl ID.
+      axis_loadings: data/loadings/jbs_axis_discovery.csv
+      # Added to FPKM before the log2 for axis scoring. Spots are sparse, where
+      # the bulk pseudocount of 0.01 would let zero entries dominate.
+      pseudocount: 1
+      # Fraction of each spot overlapping IvyGAP histopathology annotations,
+      # present in 30 of the standard Visium sections, and the regions those annotations are
+      # grouped into, from the tumour periphery to its core. Vascular features
+      # and pseudopalisading cover too few spots to compare and are left out.
+      histology_features: Histopath annotation overlap
+      histology_regions:
+        Leading edge: [Leading edge (grey matter), Leading edge (white matter)]
+        Infiltrating tumour: [Infiltrating tumor (grey matter), Infiltrating tumor (white matter)]
+        Cellular tumour: [Cellular tumor]
+        Perinecrotic zone: [Perinecrotic zone]
+        Necrosis: [Necrosis]
+      # The region the others are compared with.
+      reference_region: Cellular tumour
+
+  single_cell:
+
+    # Paired primary/recurrent snRNA-seq, 34 patients over 53 samples.
+    wang_2022:
+      path: data/single-cell/wang_counts.h5ad
+      sample_column: Sample
+      patient_column: "Pair#"
+      stage_column: Stage
+      # The two stages a paired analysis compares; any other value is left out.
+      primary_value: Primary
+      recurrent_value: Recurrent
+      cell_type_column: CellType
+      # Malignant cell state; blank for every cell outside the malignant population.
+      malignant_state_column: Malignant_state
+      # Cell types are collapsed into populations, and a sample is pseudobulked
+      # over each population as well as over all of its cells. Cells with no
+      # cell type label are counted as Unknown before the mapping is applied.
+      cell_populations:
+        Malignant: Malignant
+        Myeloid: Immune
+        TAM: Immune
+        Lymphocyte: Immune
+        Astrocyte: Brain
+        Oligodendrocyte: Brain
+        OPC: Brain
+        Neuron: Brain
+        Excitatory neuron: Brain
+        Inhibitory neuron: Brain
+        Endothel: Other
+        Pericyte: Other
+        Other: Other
+        Unknown: Other
+      # Added to FPKM before the log2 for axis scoring. Single-cell matrices are
+      # sparse, where the bulk pseudocount of 0.01 would let zero entries dominate.
+      pseudocount: 1
+      # How this dataset is labelled on figure titles and in legends.
+      label: Wang (2022)
+      # Stacking order of the composition bars, bottom to top.
+      population_order: [Malignant, Immune, Other, Brain]
+      tme_order: [Unknown, Myeloid, Lymphocyte, Oligodendrocyte, Neuron]
+      malignant_state_order: [MES2, MES1, AC, Unresolved, OPC, NPC1, NPC2]
+      # Clinical metadata published with the data, each column with what it
+      # records, for the patient table (single_cell_patient_table.py). Every
+      # sample is an IDH-wildtype glioblastoma, and the assays each sample went
+      # through are left out.
+      sample_metadata_columns:
+        Age: Age at surgery (years)
+        Sex: Sex
+        Tumor site: Tumour site
+        Elapsed time to recurrence: Time from the first surgery to recurrence (days)
+        Overall survival: Overall survival (days)
+      # Pseudobulks derived from the file above by pseudobulk.py.
+      pseudobulk: data/single-cell/pseudobulk/all_wang_2022_counts.h5ad
+      subsampled_pseudobulk: data/single-cell/pseudobulk/subsampled_wang_2022_counts.h5ad
+
+    # Longitudinal snRNA-seq, 58 patients over 118 samples, up to three
+    # timepoints each. Malignant states follow Nomura et al.
+    nomura_2025:
+      path: data/single-cell/nomura_counts.h5ad
+      sample_column: Sample
+      patient_column: Patient
+      stage_column: PvsR
+      # The two stages a paired analysis compares; any other value, a second
+      # recurrence here, is left out.
+      primary_value: Primary
+      recurrent_value: 1st recurrence
+      cell_type_column: CellType
+      # Malignant cell state; blank for every cell outside the malignant population.
+      malignant_state_column: Malignant_state
+      # Cell types are collapsed into populations, and a sample is pseudobulked
+      # over each population as well as over all of its cells. Cells with no
+      # cell type label are counted as Unknown before the mapping is applied.
+      cell_populations:
+        Malignant: Malignant
+        Myeloid: Immune
+        TAM: Immune
+        Lymphocyte: Immune
+        Astrocyte: Brain
+        Oligodendrocyte: Brain
+        OPC: Brain
+        Neuron: Brain
+        Excitatory neuron: Brain
+        Inhibitory neuron: Brain
+        Endothel: Other
+        Pericyte: Other
+        Other: Other
+        Unknown: Other
+      # Added to FPKM before the log2 for axis scoring. Single-cell matrices are
+      # sparse, where the bulk pseudocount of 0.01 would let zero entries dominate.
+      pseudocount: 1
+      # How this dataset is labelled on figure titles and in legends.
+      label: Nomura (2025)
+      # Stacking order of the composition bars, bottom to top.
+      population_order: [Malignant, Immune, Brain, Other]
+      tme_order: [Other, TAM, Lymphocyte, Endothel, Pericyte, Astrocyte,
+                  Oligodendrocyte, OPC, Inhibitory neuron, Excitatory neuron]
+      malignant_state_order: [Stress, Hypoxia, MES, Unresolved, GPC, AC, Cilia,
+                              Neuron, OPC, NPC]
+      # Sample metadata published with the data, each column with what it
+      # records, for the patient table (single_cell_patient_table.py).
+      sample_metadata_columns:
+        ID: Sample identifier of Nomura et al. (patient and timepoint)
+        Timepoint: Timepoint (T1 first surgery, T2 and T3 later ones)
+      # Pseudobulks derived from the file above by pseudobulk.py.
+      pseudobulk: data/single-cell/pseudobulk/all_nomura_2025_counts.h5ad
+      subsampled_pseudobulk: data/single-cell/pseudobulk/subsampled_nomura_2025_counts.h5ad
+
+# Not cohort-specific.
+
+# Gene annotation, every biotype: Ensembl ID, symbol, length, and the JBS axis
+# loadings (data/loadings/jbs_axis_discovery.csv), blank outside the axis.
+gene_metadata:
+  path: data/gene_metadata/gene_metadata_loadings.csv
+  length_column: length
+  loadings_column: jbs_axis_loading
+
+# Ensembl ID to HGNC symbol and gene length, every biotype, for data published by
+# symbol alone.
+gene_symbols:
+  path: data/gene_metadata/gene-lengths.csv
+  column: hgnc_symbol
+  length_column: length
+
+# Gene loadings, by symbol, of the principal component analysis distributed with
+# the Wang (2022) single-nucleus data. The column named is the component that runs
+# from proneural (negative) to mesenchymal (positive).
+pn_mes_loadings:
+  path: data/loadings/pn_mes_wang_2022.csv
+  column: PC_1
+
+# JARID2 binding site gene sets, one Ensembl ID per line.
+gene_sets:
+  jbs_all: data/gene_sets/jbs_all.txt
+  tanner2024_le50: data/gene_sets/tanner2024_jarid_le50.txt
+  tanner2024_le70: data/gene_sets/tanner2024_jarid_le70.txt
+
+# Gene set collection for enrichment analysis (GMT, Ensembl IDs): curated brain
+# and glioma cell type and state signatures, then pathway database sets.
+gsea_gene_sets: data/gene_sets/gsea_gene_sets.gmt
+
+# Gene sets enriched in the same direction in the primary tumours of both
+# Discovery_Stead and EORTC, and in their recurrent tumours
+# (responder_gsea_overlap.R).
+primary_trs_shared_gene_sets: data/gsea/primary_trs_shared_gene_sets.csv
+recurrent_trs_shared_gene_sets: data/gsea/recurrent_trs_shared_gene_sets.csv
+
+# Per-sample features TRS is predicted from (trs_prediction_feature_selection.py,
+# trs_prediction.py), one row per sample, keyed by sample name; primary and
+# recurrent samples have rows of their own. scFoundation: the scFoundation model's
+# bulk embedding (768 dimensions) of the included pairs' raw counts. ssGSEA:
+# unnormalised GSVA ssGSEA scores (minimum set size 15) of the gene sets in
+# primary_trs_shared_gene_sets, from log2(counts per million / length in kb + 0.01)
+# of protein-coding genes, for every sample. Both score each sample on its own.
+trs_prediction_features:
+  scFoundation: data/bulk/scFoundation_reductions.csv
+  ssGSEA: data/bulk/ssgsea_enriched_gene_sets.csv
+
+# Features selected for each stage's models (trs_prediction_feature_selection.py).
+trs_prediction_selected_features:
+  primary: data/bulk/trs_prediction_features_primary.csv
+  recurrent: data/bulk/trs_prediction_features_recurrent.csv
+
+# SRSF11 variants of all Up and all Down responders of EORTC and Discovery_Stead,
+# one variant per gene and sample, and the protein's length and domains from
+# maftools' annotation of its longer transcript (responder_variants.R).
+srsf11_variants: data/variants/srsf11_variants.csv
+srsf11_protein: data/variants/srsf11_protein.csv

@@ -1,0 +1,92 @@
+[workspace]
+authors = ["Morgan <103996738+scmpht@users.noreply.github.com>"]
+channels = ["conda-forge", "bioconda"]
+name = "TRS"
+platforms = ["osx-arm64", "osx-64", "linux-64"]
+version = "0.1.0"
+
+[tasks]
+jbs_axis_loadings = "python code/jbs_axis_loadings.py"
+jbs_axis_score = "python code/jbs_axis_score.py"
+trs_clinical_correlates = "python code/trs_clinical_correlates.py"
+axis_score_polarisation = "python code/axis_score_polarisation.py"
+trs_column = "python code/trs_column.py"
+axis_score_column = "python code/axis_score_column.py"
+axis_score_gsea = "Rscript code/axis_score_gsea.R"
+patient_table = "python code/patient_table.py"
+single_cell_patient_table = "python code/single_cell_patient_table.py"
+pseudobulk = "python code/pseudobulk.py"
+composition_vs_axis_score = "python code/composition_vs_axis_score.py"
+axis_score_composition_regression = "python code/axis_score_composition_regression.py"
+celltype_axis_score_distribution = "python code/celltype_axis_score_distribution.py"
+malignant_state_axis_score_by_stage = "python code/malignant_state_axis_score_by_stage.py"
+trs_vs_axis_score_difference = "python code/trs_vs_axis_score_difference.py"
+responder_de_overlap = "Rscript code/responder_de_overlap.R"
+responder_gsea_overlap = "Rscript code/responder_gsea_overlap.R"
+enriched_gene_set_jaccard = "Rscript code/enriched_gene_set_jaccard.R"
+axis_score_vs_pnmes = "python code/axis_score_vs_pnmes.py"
+multiregion_axis_score = "python code/multiregion_axis_score.py"
+visium_axis_score = "python code/visium_axis_score.py"
+trs_prediction_feature_selection = "python code/trs_prediction_feature_selection.py"
+trs_prediction = "python code/trs_prediction.py"
+responder_variant_panels = "python code/responder_variant_panels.py"
+
+[dependencies]
+python = "3.13.*"
+numpy = ">=2.5.2,<3"
+pandas = ">=3.0.5,<4"
+matplotlib = ">=3.11.1,<4"
+pyyaml = ">=6.0.3,<7"
+h5py = ">=3.16.0,<4"
+anndata = ">=0.13.3.post0,<0.14"
+seaborn = ">=0.13.2,<0.14"
+scipy = ">=1.18.1,<2"
+pingouin = ">=0.6.1,<0.7"
+statannotations = ">=0.7.2,<0.8"
+scikit-learn = ">=1.9.1,<2"
+scikit-bio = ">=0.7.3,<0.8"
+r-base = ">=4.5.3,<4.6"
+bioconductor-deseq2 = ">=1.50.2,<2"
+bioconductor-zellkonverter = ">=1.20.1,<2"
+bioconductor-singlecellexperiment = ">=1.32.0,<2"
+r-dplyr = ">=1.2.1,<2"
+r-ggplot2 = ">=4.0.3,<5"
+r-ggvenndiagram = ">=1.5.7,<2"
+r-patchwork = ">=1.3.2,<2"
+r-yaml = ">=2.3.12,<3"
+bioconductor-rhdf5 = ">=2.54.1,<3"
+bioconductor-hdf5array = ">=1.38.0,<2"
+bioconductor-fgsea = ">=1.36.2,<2"
+r-pheatmap = ">=1.0.13,<2"
+r-gtable = ">=0.3.6,<0.4"
+statsmodels = ">=0.15.0,<0.16"
+openpyxl = ">=3.1.5,<4"
+squidpy = ">=1.8.2,<2"
+scikit-optimize = ">=0.10.2,<0.11"
+r-writexl = ">=2.0.1,<3"
+r-tidyverse = ">=2.0.0,<3"
+r-ggalluvial = ">=0.12.6,<0.13"
+r-tidyr = ">=1.3.2,<2"
+r-stringr = ">=1.6.0,<2"
+
+[feature.maftools]
+platforms = ["osx-64", "linux-64"]
+
+[feature.maftools.dependencies]
+r-base = ">=4.5.3,<4.6"
+bioconductor-maftools = ">=2.26.0,<3"
+"r-r.utils" = ">=2.13.0,<3"
+"r-data.table" = ">=1.18.6.1,<2"
+r-ggplot2 = ">=4.0.3,<5"
+r-ggvenndiagram = ">=1.5.7,<2"
+r-yaml = ">=2.3.12,<3"
+bioconductor-zellkonverter = ">=1.20.1,<2"
+bioconductor-singlecellexperiment = ">=1.32.0,<2"
+bioconductor-rhdf5 = ">=2.54.1,<3"
+bioconductor-hdf5array = ">=1.38.0,<2"
+
+[feature.maftools.tasks]
+responder_variants = "Rscript code/responder_variants.R"
+
+[environments]
+maftools = { features = ["maftools"], no-default-feature = true }

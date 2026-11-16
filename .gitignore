@@ -1,0 +1,33 @@
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+# data is copied or linked in, and not tracked
+data/*
+!data/.gitkeep
+# except the gene annotation, which jbs_axis_score.py needs to run and which is
+# small enough to travel with the script
+!data/gene_metadata/
+# and the synthetic counts of the demonstration run (code/run), whose generator
+# is not tracked
+!data/demo/
+code/demo_counts.py
+
+# outputs of the demonstration run, and Code Ocean's working folders
+/results/
+/scratch/
+
+# python
+__pycache__/
+*.pyc
+*.ipynb_checkpoints
+*.ipynb
+
+# macOS
+.DS_Store
+
+# vector panels and composed figures; tracked once the layout settles
+figures/*
+
+CLAUDE.md
+.claude/*
