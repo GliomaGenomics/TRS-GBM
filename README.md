@@ -1,9 +1,6 @@
 # TRS
 
-Code for Thomas et al., *Glioblastoma exhibits bidirectional adaptation to treatment through JARID2-associated developmental plasticity*
-
-<img width="468" height="69" alt="image" src="https://github.com/user-attachments/assets/bd9d1cff-6d45-41ee-bca9-c75f3fe1cd6f" />
-*.
+Code for Thomas et al., *Glioblastoma exhibits bidirectional adaptation to treatment through JARID2-associated developmental plasticity*.
 
 ## Scoring samples on the JBS axis
 
