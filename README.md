@@ -1,7 +1,9 @@
 # TRS
 
-Code for Thomas et al., *A constrained phenotypic axis governs glioblastoma
-recurrence through ecosystem remodelling and chromatin plasticity*.
+Code for Thomas et al., *Glioblastoma exhibits bidirectional adaptation to treatment through JARID2-associated developmental plasticity*
+
+<img width="468" height="69" alt="image" src="https://github.com/user-attachments/assets/bd9d1cff-6d45-41ee-bca9-c75f3fe1cd6f" />
+*.
 
 ## Scoring samples on the JBS axis
 
